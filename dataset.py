@@ -6,9 +6,16 @@ import os
 import os.path
 import torchvision.transforms as transforms
 import math
+from augment import augment
+import numpy as np
 
 IMG_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.ppm', '.bmp', '.pgm']
 
+def data_augment(img):
+    # instagram
+    # distortion
+    # Assume camera is facing front and in the middle of bot.
+    return augment(img)
 
 def is_image_file(filename):
     """Checks if a file is an image.
@@ -93,7 +100,7 @@ class ImageFolder(data.Dataset):
     """
 
     def __init__(self, root, transform=transforms.ToTensor(), target_transform=None,
-                 loader=default_loader, return_path=False):
+                 loader=default_loader, return_path=False, augment=False):
         imgs = make_dataset(root)
         if len(imgs) == 0:
             raise(RuntimeError("Found 0 images in subfolders of: " + root + "\n"
@@ -105,6 +112,7 @@ class ImageFolder(data.Dataset):
         self.target_transform = target_transform
         self.loader = loader
         self.return_path = return_path
+        self.augment = augment
 
     def __getitem__(self, index):
         """
@@ -119,6 +127,8 @@ class ImageFolder(data.Dataset):
         target[1] = target[1] + math.pi if target[1] < 0 else target[1] - math.pi
         target = torch.Tensor(target)
         img = self.loader(path)
+        if self.augment:
+            img = data_augment(np.array(img))
         if self.transform is not None:
             img = self.transform(img)
         if self.target_transform is not None:

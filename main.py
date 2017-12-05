@@ -33,14 +33,10 @@ parser.add_argument('--resume', default='', type=str, metavar='PATH',
                     help='path to latest checkpoint (default: none)')
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
+parser.add_argument('--augment', dest='augment', action='store_true',
+                    help='augment data with domain randomization')
 
 best_loss = 1e10
-
-def data_augment(img):
-    # instagram
-    # distortion
-    # Assume camera is facing front and in the middle of bot.
-    return img
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
@@ -63,7 +59,7 @@ def main():
     global args, best_loss
     args = parser.parse_args()
 
-    data_set = ImageFolder('../gym-duckietown/images')
+    data_set = ImageFolder('../gym-duckietown/images', augment=args.augment)
 
     writer = SummaryWriter('log/')
 
@@ -79,7 +75,7 @@ def main():
     model = CNNPolicy(3)
     optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     # optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
-    
+
     if args.resume:
         if os.path.isfile(args.resume):
             print("=> loading checkpoint '{}'".format(args.resume))
