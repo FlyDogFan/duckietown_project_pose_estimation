@@ -84,6 +84,7 @@ def sample_color():
 def sample(shape):
     types = {0:sample_solid, 1:sample_clouds, 2:sample_wood, 3:sample_cross, 4:sample_marble}
     return types[np.random.randint(0,5)](shape)
+    #return sample_solid(shape)
 
 
 if __name__=='__main__':

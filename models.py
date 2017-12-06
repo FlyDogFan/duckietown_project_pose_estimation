@@ -34,7 +34,7 @@ class CNNPolicy(nn.Module):
         self.linear1.weight.data.mul_(relu_gain)
 
     def forward(self, inputs):
-        x = self.bn1(self.conv1(self.bn0(inputs / 255.0)))
+        x = self.bn1(self.conv1(self.bn0(inputs)))
         x = F.relu(x)
 
         x = self.bn2(self.conv2(x))

@@ -8,13 +8,14 @@ KEY = {"sky":[2], "road":[1], "ground":[3], "lines":[0]}
 CC = np.load('./cc.npz')['cc']
 
 def augment(im):
+    im = np.float32(im) / 255.
     pix = im.reshape((-1,3))
     imc = nn(pix,CC).reshape(im.shape[:-1])
-    out = np.zeros_like(im, dtype=np.float)
+    out = np.zeros_like(im)
     for k in KEY:
         mask = sum([imc == i for i in KEY[k]])
-        out += mask[:,:,None] * sample(imc.shape) / 255.
-    return out
+        out += mask[:,:,None] * sample(imc.shape) / 128.
+    return out - 1.
 
 if __name__=='__main__':
     from dataset import ImageFolder
