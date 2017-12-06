@@ -23,6 +23,6 @@ if __name__=='__main__':
     for i in range(20):
         im = X[i][0].numpy().transpose(1,2,0)
         a = (augment((im + 1)/2) + 1) / 2 # input is -1 to 1, and output should be 0 to 1
-        cv2.imshow('img', np.uint8(a * 255))
+        cv2.imshow('img', np.uint8(a * 255)[:,:,::-1]) # rgb to bgr
         cv2.waitKey(0)
         cv2.destroyAllWindows()
