@@ -37,6 +37,8 @@ parser.add_argument('--augment', dest='augment', action='store_true',
                     help='augment data with domain randomization')
 parser.add_argument('--use_model2', dest='use_model2', action='store_true',
                     help='use bigger convnet')
+parser.add_argument('--id', type=str, default='',
+                    help='id of the trained model')
 
 best_loss = 1e10
 
@@ -191,10 +193,11 @@ def validate(val_loader, model):
 
     return losses.avg
 
-def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
+def save_checkpoint(state, is_best, filename=None):
+    filename = filename or 'checkpoint'+args.id+'.pth.tar'
     torch.save(state, filename)
     if is_best:
-        shutil.copyfile(filename, 'model_best.pth.tar')
+        shutil.copyfile(filename, 'model_best'+args.id+'.pth.tar')
 
 def adjust_learning_rate(optimizer, epoch):
     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
