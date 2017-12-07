@@ -39,6 +39,8 @@ parser.add_argument('--use_model2', dest='use_model2', action='store_true',
                     help='use bigger convnet')
 parser.add_argument('--id', type=str, default='',
                     help='id of the trained model')
+parser.add_argument('--cuda', action='store_true',
+                    help='if use gpu or not')
 
 best_loss = 1e10
 
@@ -80,6 +82,10 @@ def main():
         model = CNNPolicy2(3)
     else:
         model = CNNPolicy(3)
+
+    if args.cuda:
+        model.cuda()
+
     optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     # optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
 
@@ -130,6 +136,9 @@ def train(train_loader, model, optimizer, epoch):
         # measure data loading time
         data_time.update(time.time() - end)
 
+        if args.cuda:
+            input, target = input.cuda(), target.cuda()
+
         input_var = torch.autograd.Variable(input)
         target_var = torch.autograd.Variable(target)
 
@@ -168,6 +177,9 @@ def validate(val_loader, model):
 
     end = time.time()
     for i, (input, target) in enumerate(val_loader):
+        if args.cuda:
+            input, target = input.cuda(), target.cuda()
+
         input_var = torch.autograd.Variable(input, volatile=True)
         target_var = torch.autograd.Variable(target, volatile=True)
 
