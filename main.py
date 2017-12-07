@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from dataset import ImageFolder
-from models import CNNPolicy
+from models import CNNPolicy, CNNPolicy2
 import numpy as np
 from tensorboardX import SummaryWriter
 import random
@@ -35,6 +35,8 @@ parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
                     help='evaluate model on validation set')
 parser.add_argument('--augment', dest='augment', action='store_true',
                     help='augment data with domain randomization')
+parser.add_argument('--use_model2', dest='use_model2', action='store_true',
+                    help='use bigger convnet')
 
 best_loss = 1e10
 
@@ -72,7 +74,10 @@ def main():
         data_set, batch_size=args.batch_size, shuffle=False,
         num_workers=1, sampler=splits['val'])
 
-    model = CNNPolicy(3)
+    if args.use_model2:
+        model = CNNPolicy2(3)
+    else:
+        model = CNNPolicy(3)
     optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     # optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
 
