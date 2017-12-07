@@ -99,7 +99,7 @@ class ImageFolder(data.Dataset):
         imgs (list): List of (image path, class_index) tuples
     """
 
-    def __init__(self, root, transform=transforms.ToTensor(), target_transform=None,
+    def __init__(self, root, transform=None, target_transform=None,
                  loader=default_loader, return_path=False, augment=False):
         imgs = make_dataset(root)
         if len(imgs) == 0:
@@ -108,7 +108,7 @@ class ImageFolder(data.Dataset):
 
         self.root = root
         self.imgs = imgs
-        self.transform = transform
+        self.transform = transform or transforms.Compose([transforms.Scale((64,64)), transforms.ToTensor()])
         self.target_transform = target_transform
         self.loader = loader
         self.return_path = return_path
@@ -124,13 +124,19 @@ class ImageFolder(data.Dataset):
         """
         path = self.imgs[index]
         target = [float(_) for _ in path[path.rfind('/')+1:path.rfind('.')].split(',')]
-        target[1] = target[1] + math.pi if target[1] < 0 else target[1] - math.pi
+        try:
+            target[1] = target[1] + math.pi if target[1] < 0 else target[1] - math.pi
+        except: # real images
+            target = [0, 0]
         target = torch.Tensor(target)
         img = self.loader(path)
-        if self.augment:
-            img = data_augment(np.array(img))
         if self.transform is not None:
             img = self.transform(img)
+        if self.augment:
+            img = torch.from_numpy(data_augment(img.numpy().transpose([1,2,0])).transpose([2,0,1]))
+        else:
+            img = (img * 2) - 1
+
         if self.target_transform is not None:
             target = self.target_transform(target)
 
