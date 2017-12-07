@@ -39,7 +39,7 @@ parser.add_argument('--use_model2', dest='use_model2', action='store_true',
                     help='use bigger convnet')
 parser.add_argument('--id', type=str, default='',
                     help='id of the trained model')
-parser.add_argument('--cuda', type=str, action='store_true',
+parser.add_argument('--cuda', action='store_true',
                     help='if use gpu or not')
 
 best_loss = 1e10
