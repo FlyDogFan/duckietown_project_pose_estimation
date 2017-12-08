@@ -25,6 +25,8 @@ parser.add_argument('--lr', '--learning-rate', default=4e-4, type=float,
                     metavar='LR', help='initial learning rate')
 parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                     help='momentum')
+parser.add_argument('--workers', default=4, type=int,
+                    help='workers for data loading')
 parser.add_argument('--weight-decay', '--wd', default=1e-4, type=float,
                     metavar='W', help='weight decay (default: 1e-4)')
 parser.add_argument('--print-freq', '-p', default=10, type=int,
@@ -73,10 +75,10 @@ def main():
 
     train_loader = torch.utils.data.DataLoader(
         data_set, batch_size=args.batch_size, shuffle=False,
-        num_workers=1, sampler=torch.utils.data.sampler.RandomSampler(splits['train']))
+        num_workers=args.workers, sampler=torch.utils.data.sampler.RandomSampler(splits['train']))
     val_loader = torch.utils.data.DataLoader(
         data_set, batch_size=args.batch_size, shuffle=False,
-        num_workers=1, sampler=splits['val'])
+        num_workers=args.workers, sampler=splits['val'])
 
     if args.use_model2:
         model = CNNPolicy2(3)
