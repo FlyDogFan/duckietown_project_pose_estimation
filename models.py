@@ -110,6 +110,6 @@ class CNNPolicy2(nn.Module):
         x = F.dropout(F.relu(x), 0.5, self.training)
         x = self.linear2(x)
 
-        x = x + torch.autograd.Variable(torch.Tensor([1.12, 0]))
+        x = x + torch.autograd.Variable(x.data.new([1.12, 0]))
 
         return x
